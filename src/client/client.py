@@ -3,7 +3,7 @@ import threading
 
 hostname = socket.gethostname()
 host     = socket.gethostbyname(hostname)
-port     = 8001
+port     = 8000
 
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 client_socket.connect((host,port))
