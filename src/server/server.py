@@ -1,6 +1,7 @@
 import socket
 import threading
 import utils
+import errno
 from commands import exec_help, exec_pm, exec_datetime, exec_listusers
 
 host_name         = socket.gethostname()
@@ -36,9 +37,11 @@ def recv():
 		try:
 			data = client.socket.recv(1024).decode()
 			handle_message(client, data)
-		except Exception as e:
-			print(e) # should change to smth else
-			print(f"Connection is closed ({client.to_string()})")
+		except socket.error as error:
+			if error.errno == errno.WSAECONNRESET:
+				print(f"Connection is closed ({client.to_string()})")
+			else:
+				print(f"Unknown exception {error}")
 			connected_clients.remove(client)
 			utils.broadcast_message(connected_clients, f"{client.name} disconnected. Headcount: {clength()}")
 			break
