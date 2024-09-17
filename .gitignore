@@ -1,1 +1,7 @@
 /.idea/
+/src/client/build/
+/src/client/dist/
+/src/client/client.spec
+/src/server/build/
+/src/server/dist/
+/src/server/server.spec
