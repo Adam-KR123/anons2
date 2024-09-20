@@ -28,3 +28,6 @@ def time_format():
 def nowtime_format():
 	now = datetime.now()
 	return now.strftime("%Y-%m-%d %H:%M:%S")
+
+def fulltime_format_from(ft):
+	return ft.strftime("%Y-%m-%d %H:%M:%S")

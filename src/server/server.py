@@ -2,11 +2,13 @@ import socket
 import threading
 import utils
 import errno
+from datetime import datetime
 from commands import exec_help, exec_pm, exec_datetime, exec_listusers
+from tabulate import tabulate
 
 host_name         = socket.gethostname()
 host              = socket.gethostbyname(host_name)
-port              = 5000
+port              = 5001
 connected_clients = list()
 all_clients 	  = 0
 
@@ -17,9 +19,10 @@ def clength():
 	return len(connected_clients)
 
 class Client:
-	def __init__(self, name, sck):
-		self.name   = name
-		self.socket = sck
+	def __init__(self, name, sck, join_time):
+		self.name      = name
+		self.socket    = sck
+		self.join_time = join_time
 	def to_string(self):
 		return f"{self.name};{self.socket}"
 
@@ -86,12 +89,14 @@ while True:
 	print(f"Connected by {addr} + conn:{conn}")
 	
 	all_clients = all_clients+1
-	new_client = Client("user" + str(all_clients), conn)
+	new_client = Client("user" + str(all_clients), conn, utils.fulltime_format_from(datetime.now()))
 	connected_clients.append(new_client)
 
 	utils.broadcast_message_except(connected_clients,f"{new_client.name} joined. Headcount: {clength()}", new_client)
-	utils.client_message(new_client,
-		f"{utils.spacer(60)}\nWelcome, your name is {new_client.name}. Current headcount is {clength()}.\n{utils.spacer(60)}")
+	utils.client_message(
+		new_client,
+		"Welcome!\n" + tabulate([(new_client.name, str(clength()), "!help")], headers=("Your name", "Headcount", "Help")) + "\n"
+	)
 
 	msg_thread = threading.Thread(target=recv)
 	msg_thread.daemon=True

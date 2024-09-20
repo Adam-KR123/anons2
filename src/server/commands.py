@@ -1,4 +1,5 @@
 import utils
+from tabulate import tabulate
 
 help_commands = [
 	"help",
@@ -35,9 +36,13 @@ def exec_datetime(clients, client, name, args):
 	
 def list_users(clients, self_client):
 	msg = "List of users:\n"
+
+	userdata = list()
 	for client in clients:
-		you_expansion = ("(You)" if client.name == self_client.name else "")
-		msg = f"{msg}- {client.name} {you_expansion}\n"
+		is_you = (" (You)" if client.name == self_client.name else "")
+		edited_name = f"{client.name}{is_you}"
+		userdata.append((edited_name, client.join_time))
+	msg = f"{msg}{tabulate(userdata, headers=('Name', 'Join time'))}"
 	return msg
 	
 def exec_listusers(clients, client, name, args):
